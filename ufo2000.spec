@@ -66,30 +66,32 @@ PREFIX := %{_prefix}
 EOF
 %{__make} \
 	CC="%{__cc}" \
+	CX="%{__cxx}" \
 	OPTFLAGS="%{rpmcflags} -I/usr/include/hawknl" \
 	OFLAGS="%{rpmcflags} -fPIC"
 cd -
 
-%{__make}
+%{__make} \
 	CC="%{__cc}" \
+	CX="%{__cxx}" \
 	OPTFLAGS="%{rpmcflags} -I/usr/include/hawknl -Idumb/include" \
 	DATA_DIR="%{_datadir}/games/%{name}" \
 	all server
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install $RPM_BUILD_ROOT%{_prefix}/games
-install %{name} $RPM_BUILD_ROOT%{_prefix}/games
-install %{name}-srv $RPM_BUILD_ROOT%{_prefix}/games
+install -d $RPM_BUILD_ROOT%{_bindir}
+install %{name} $RPM_BUILD_ROOT%{_bindir}
+install %{name}-srv $RPM_BUILD_ROOT%{_bindir}
 
-install $RPM_BUILD_ROOT%{_datadir}/games/%{name}
+install -d $RPM_BUILD_ROOT%{_datadir}/games/%{name}
 install %{name}.default.ini $RPM_BUILD_ROOT%{_datadir}/games/%{name}/%{name}.ini
 
 for i in arts extensions fonts init-scripts newmaps newmusic newunits script translations; do
 	cp -a $i $RPM_BUILD_ROOT%{_datadir}/games/%{name}
 done
-install $RPM_BUILD_ROOT%{_datadir}/games/%{name}/TFTD
-install $RPM_BUILD_ROOT%{_datadir}/games/%{name}/XCOM
+install -d $RPM_BUILD_ROOT%{_datadir}/games/%{name}/TFTD
+install -d $RPM_BUILD_ROOT%{_datadir}/games/%{name}/XCOM
 for i in keyboard.dat select_option.ini soundmap.xml squad.default.lua \
 	ufo2000.dat %{name}.default.ini xcom_folder.ini; do
 	cp -a $i $RPM_BUILD_ROOT%{_datadir}/games/%{name}
@@ -99,7 +101,7 @@ install ufo2000-srv.conf $RPM_BUILD_ROOT%{_datadir}/games/%{name}
 find $RPM_BUILD_ROOT%{_datadir}/games/%{name} -type d -print0 | xargs -0 chmod 775
 
 # create menu and icon
-install $RPM_BUILD_ROOT%{_pixmapsdir}
+install -d $RPM_BUILD_ROOT%{_pixmapsdir}
 install %{SOURCE1} $RPM_BUILD_ROOT%{_pixmapsdir}
 
 cat > %{name}.desktop << EOF
@@ -113,6 +115,7 @@ Encoding=UTF-8
 Categories=Game;StrategyGame;
 Type=Application
 EOF
+install -d $RPM_BUILD_ROOT%{_desktopdir}
 install %{name}.desktop $RPM_BUILD_ROOT%{_desktopdir}
 
 %clean
@@ -122,8 +125,8 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc AUTHORS ChangeLog COPYING *.txt *.html readme_select.ini
 %doc docs/*
-%{_prefix}/games/ufo2000
-%{_prefix}/games/ufo2000-srv
+%attr(755,root,root) %{_bindir}/ufo2000
+%attr(755,root,root) %{_bindir}/ufo2000-srv
 %dir %{_datadir}/games/%{name}
 %{_datadir}/games/%{name}/*
 %{_pixmapsdir}/*.png
