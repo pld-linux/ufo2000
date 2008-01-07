@@ -6,9 +6,12 @@ License:	GPL
 Group:		X11/Applications/Games/Strategy
 URL:		http://ufo2000.sourceforge.net/
 Source0:	http://dl.sourceforge.net/ufo2000/%{name}-%{version}-src.tar.bz2
+# Source0-md5:	b6e4bfa6b860b3da733b48e5fd347ec9
 Source1:	%{name}.png
 Source2:	http://dl.sourceforge.net/dumb/dumb-0.9.2.tar.gz
+# Source2-md5:	0ce45f64934e6d5d7b82a55108596680
 Source3:	http://dl.sourceforge.net/ufo2000/%{name}-music-2004.zip
+# Source3-md5:	2db2878a55e5df97a198f2310603a5c7
 BuildRequires:	allegro-devel
 BuildRequires:	expat-devel
 BuildRequires:	freetype2-devel
