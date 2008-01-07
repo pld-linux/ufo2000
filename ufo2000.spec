@@ -1,3 +1,5 @@
+# TODO
+# - system dumb package
 Summary:	UFO2000 is a turn based tactical squad simulation multiplayer game
 Name:		ufo2000
 Version:	0.7.1086
@@ -14,7 +16,7 @@ Source3:	http://dl.sourceforge.net/ufo2000/%{name}-music-2004.zip
 # Source3-md5:	2db2878a55e5df97a198f2310603a5c7
 BuildRequires:	allegro-devel
 BuildRequires:	expat-devel
-BuildRequires:	freetype2-devel
+BuildRequires:	freetype-devel >= 1:2.0
 BuildRequires:	libhawknl-devel
 BuildRequires:	libogg-devel
 BuildRequires:	libpng-devel
@@ -40,7 +42,7 @@ NOTE: You must be a member of group game to play the game!
 
 %prep
 %setup -q -c -n %{name}_%{version} -a2
-find . -name .svn | xargs rm -rf
+find -name .svn | xargs rm -rf
 
 # some sound files ..
 cd newmusic
@@ -63,11 +65,14 @@ ALL_TARGETS += allegro allegro-examples allegro-headers
 PREFIX := %{_prefix}
 EOF
 %{__make} \
-	OFLAGS="$RPM_OPT_FLAGS -fPIC"
+	CC="%{__cc}" \
+	OPTFLAGS="%{rpmcflags} -I/usr/include/hawknl" \
+	OFLAGS="%{rpmcflags} -fPIC"
 cd -
 
-%{__make} 
-	OPTFLAGS="$RPM_OPT_FLAGS -I/usr/include/hawknl -Idumb/include" \
+%{__make}
+	CC="%{__cc}" \
+	OPTFLAGS="%{rpmcflags} -I/usr/include/hawknl -Idumb/include" \
 	DATA_DIR="%{_datadir}/games/%{name}" \
 	all server
 
