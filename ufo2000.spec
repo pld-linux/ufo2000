@@ -7,7 +7,7 @@
 Summary:	UFO2000 is a turn based tactical squad simulation multiplayer game
 Name:		ufo2000
 Version:	0.7.1086
-Release:	0.1
+Release:	0.2
 License:	GPL
 Group:		X11/Applications/Games/Strategy
 URL:		http://ufo2000.sourceforge.net/
@@ -19,6 +19,7 @@ Source2:	%{name}.png
 Source3:	%{name}.desktop
 Source4:	http://dl.sourceforge.net/dumb/dumb-0.9.2.tar.gz
 # Source4-md5:	0ce45f64934e6d5d7b82a55108596680
+%{!?with_system_dumb:BuildRequires:	allegro-devel}
 %{?with_system_dumb:BuildRequires:	dumb-devel}
 BuildRequires:	expat-devel
 BuildRequires:	freetype-devel >= 1:2.0
@@ -107,13 +108,14 @@ for i in keyboard.dat select_option.ini soundmap.xml squad.default.lua \
 done
 install ufo2000-srv.conf $RPM_BUILD_ROOT%{_datadir}/games/%{name}
 
-find $RPM_BUILD_ROOT%{_datadir}/games/%{name} -type d -print0 | xargs -0 chmod 775
-
 # create menu and icon
 install -d $RPM_BUILD_ROOT%{_pixmapsdir}
 install %{SOURCE2} $RPM_BUILD_ROOT%{_pixmapsdir}
 install -d $RPM_BUILD_ROOT%{_desktopdir}
 install %{SOURCE3} $RPM_BUILD_ROOT%{_desktopdir}
+
+# not needed for playing game
+rm -f $RPM_BUILD_ROOT%{_datadir}/games/%{name}/translations/{*.txt,*.pot}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -125,6 +127,30 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/ufo2000
 %attr(755,root,root) %{_bindir}/ufo2000-srv
 %dir %{_datadir}/games/%{name}
-%{_datadir}/games/%{name}/*
+%{_datadir}/games/%{name}/*.conf
+%{_datadir}/games/%{name}/*.dat
+%{_datadir}/games/%{name}/*.ini
+%{_datadir}/games/%{name}/*.lua
+%{_datadir}/games/%{name}/*.xml
+%{_datadir}/games/%{name}/TFTD
+%{_datadir}/games/%{name}/XCOM
+%{_datadir}/games/%{name}/arts
+%{_datadir}/games/%{name}/extensions
+%{_datadir}/games/%{name}/fonts
+%{_datadir}/games/%{name}/init-scripts
+%{_datadir}/games/%{name}/newmaps
+%{_datadir}/games/%{name}/newmusic
+%{_datadir}/games/%{name}/newunits
+%{_datadir}/games/%{name}/script
+%dir %{_datadir}/games/%{name}/translations
+%{_datadir}/games/%{name}/translations/ufo2000-apr.po
+%lang(be) %{_datadir}/games/%{name}/translations/ufo2000-bel.po
+%lang(de) %{_datadir}/games/%{name}/translations/ufo2000-deu.po
+%lang(et) %{_datadir}/games/%{name}/translations/ufo2000-est.po
+%lang(fr) %{_datadir}/games/%{name}/translations/ufo2000-fre.po
+%lang(it) %{_datadir}/games/%{name}/translations/ufo2000-ita.po
+%lang(ru) %{_datadir}/games/%{name}/translations/ufo2000-rus.po
+%lang(es) %{_datadir}/games/%{name}/translations/ufo2000-spa.po
+
 %{_pixmapsdir}/*.png
 %{_desktopdir}/%{name}*.desktop
