@@ -1,5 +1,9 @@
 # TODO
 # - system dumb package
+#
+# Conditional build:
+%bcond_with	system_dumb		# build with system dumb (API incompatability)
+#
 Summary:	UFO2000 is a turn based tactical squad simulation multiplayer game
 Name:		ufo2000
 Version:	0.7.1086
@@ -9,12 +13,13 @@ Group:		X11/Applications/Games/Strategy
 URL:		http://ufo2000.sourceforge.net/
 Source0:	http://dl.sourceforge.net/ufo2000/%{name}-%{version}-src.tar.bz2
 # Source0-md5:	b6e4bfa6b860b3da733b48e5fd347ec9
-Source1:	%{name}.png
-Source2:	http://dl.sourceforge.net/dumb/dumb-0.9.2.tar.gz
-# Source2-md5:	0ce45f64934e6d5d7b82a55108596680
-Source3:	http://dl.sourceforge.net/ufo2000/%{name}-music-2004.zip
-# Source3-md5:	2db2878a55e5df97a198f2310603a5c7
-BuildRequires:	allegro-devel
+Source1:	http://dl.sourceforge.net/ufo2000/%{name}-music-2004.zip
+# Source1-md5:	2db2878a55e5df97a198f2310603a5c7
+Source2:	%{name}.png
+Source3:	%{name}.desktop
+Source4:	http://dl.sourceforge.net/dumb/dumb-0.9.2.tar.gz
+# Source4-md5:	0ce45f64934e6d5d7b82a55108596680
+%{?with_system_dumb:BuildRequires:	dumb-devel}
 BuildRequires:	expat-devel
 BuildRequires:	freetype-devel >= 1:2.0
 BuildRequires:	libhawknl-devel
@@ -41,21 +46,24 @@ extending UFO2000 with additional maps, weapon sets and units.
 NOTE: You must be a member of group game to play the game!
 
 %prep
-%setup -q -c -n %{name}_%{version} -a2
+%setup -q -c -n %{name}_%{version} %{!?with_system_dumb:-a4}
 find -name .svn | xargs rm -rf
 
 # some sound files ..
 cd newmusic
 	mv readme.txt readme.txt.org
-	unzip -q %{SOURCE3}
+	unzip -q %{SOURCE1}
 	mv readme.txt readme.txt-soundtrack
 	mv readme.txt.org readme.txt
 cd -
 
+%if %{without system_dumb}
 # dumb will be linked static
 %{__sed} -i -e 's|-laldmb -ldumb|dumb/lib/unix/libaldmb.a dumb/lib/unix/libdumb.a|g' makefile
+%endif
 
 %build
+%if %{without system_dumb}
 # first build dumb, will be linked static
 cd dumb
 cat > make/config.txt << EOF
@@ -70,11 +78,12 @@ EOF
 	OPTFLAGS="%{rpmcflags} -I/usr/include/hawknl" \
 	OFLAGS="%{rpmcflags} -fPIC"
 cd -
+%endif
 
 %{__make} \
 	CC="%{__cc}" \
 	CX="%{__cxx}" \
-	OPTFLAGS="%{rpmcflags} -I/usr/include/hawknl -Idumb/include" \
+	OPTFLAGS="%{rpmcflags} -I/usr/include/hawknl %{!?with_system_dumb:-Idumb/include}" \
 	DATA_DIR="%{_datadir}/games/%{name}" \
 	all server
 
@@ -102,21 +111,9 @@ find $RPM_BUILD_ROOT%{_datadir}/games/%{name} -type d -print0 | xargs -0 chmod 7
 
 # create menu and icon
 install -d $RPM_BUILD_ROOT%{_pixmapsdir}
-install %{SOURCE1} $RPM_BUILD_ROOT%{_pixmapsdir}
-
-cat > %{name}.desktop << EOF
-[Desktop Entry]
-Name=UFO2000
-Comment=UFO2000 is a turn based tactical squad simulation multiplayer game
-Exec=%{name}
-Icon=%{name}.png
-Terminal=false
-Encoding=UTF-8
-Categories=Game;StrategyGame;
-Type=Application
-EOF
+install %{SOURCE2} $RPM_BUILD_ROOT%{_pixmapsdir}
 install -d $RPM_BUILD_ROOT%{_desktopdir}
-install %{name}.desktop $RPM_BUILD_ROOT%{_desktopdir}
+install %{SOURCE3} $RPM_BUILD_ROOT%{_desktopdir}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
