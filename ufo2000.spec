@@ -2,15 +2,15 @@
 # - system dumb package
 #
 # Conditional build:
-%bcond_with	system_dumb		# build with system dumb (API incompatability)
+%bcond_with	system_dumb	# build with system dumb (API incompatability)
 #
-Summary:	UFO2000 is a turn based tactical squad simulation multiplayer game
+Summary:	UFO2000 - a turn based tactical squad simulation multiplayer game
+Summary(pl.UTF-8):	UFO2000 - turowa gra strategiczna z symulacją oddziałów dla wielu graczy
 Name:		ufo2000
 Version:	0.7.1086
 Release:	0.2
 License:	GPL
 Group:		X11/Applications/Games/Strategy
-URL:		http://ufo2000.sourceforge.net/
 Source0:	http://dl.sourceforge.net/ufo2000/%{name}-%{version}-src.tar.bz2
 # Source0-md5:	b6e4bfa6b860b3da733b48e5fd347ec9
 Source1:	http://dl.sourceforge.net/ufo2000/%{name}-music-2004.zip
@@ -19,6 +19,7 @@ Source2:	%{name}.png
 Source3:	%{name}.desktop
 Source4:	http://dl.sourceforge.net/dumb/dumb-0.9.2.tar.gz
 # Source4-md5:	0ce45f64934e6d5d7b82a55108596680
+URL:		http://ufo2000.sourceforge.net/
 %{!?with_system_dumb:BuildRequires:	allegro-devel}
 %{?with_system_dumb:BuildRequires:	dumb-devel}
 BuildRequires:	expat-devel
@@ -45,6 +46,23 @@ installing original X-COM and TFTD data files and use them for
 extending UFO2000 with additional maps, weapon sets and units.
 
 NOTE: You must be a member of group game to play the game!
+
+%description -l pl.UTF-8
+UFO2000 to wolnodostępna, mająca otwarte źródła turowa gra
+strategiczna z symulacją oddziałów dla wielu graczy. Jest w dużym
+stopniu zainspirowana znaną grą X-COM: UFO Defense. Choć silnik
+UFO2000 został zaprojektowany z myślą o kompatybilności z zasobami
+graficznymi i mapami z X-COM, do grania nie są wymagane żadne
+własnościowe pliki danych, ponieważ istnieją zestawy grafik wykonane
+przez fanów, domyślnie dołączone do pakietu UFO2000 - tak więc gra
+jest gotowa do użytku zaraz po zainstalowaniu.
+
+Aby otrzymać dokładny wygląd i zachowanie gry X-COM, trzeba
+zainstalować oryginalne pliki danych X-COM i TFTD, a następnie użyć
+ich do rozszerzenia UFO2000 o dodatkowe mapy, zestawy broni i
+jednostki.
+
+Uwaga: aby grać w tę grę trzeba być członkiem grupy graczy!
 
 %prep
 %setup -q -c -n %{name}_%{version} %{!?with_system_dumb:-a4}
@@ -151,6 +169,5 @@ rm -rf $RPM_BUILD_ROOT
 %lang(it) %{_datadir}/games/%{name}/translations/ufo2000-ita.po
 %lang(ru) %{_datadir}/games/%{name}/translations/ufo2000-rus.po
 %lang(es) %{_datadir}/games/%{name}/translations/ufo2000-spa.po
-
 %{_pixmapsdir}/*.png
 %{_desktopdir}/%{name}*.desktop
